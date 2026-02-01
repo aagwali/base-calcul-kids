@@ -382,20 +382,23 @@ function startSubtractionRound() {
             }
         }
 
-        // Animer le départ
+        // Animer le départ lentement (un par un)
         toRemoveIndexes.forEach((idx, i) => {
             setTimeout(() => {
                 sticks[idx].classList.add('leaving');
-            }, i * 200);
+                // Jouer un petit son pour chaque bâtonnet qui part
+                playTone(400 - i * 20, 0.1, 'sine', 0.1);
+            }, i * 600); // 600ms entre chaque bâtonnet (plus lent)
         });
 
-        // Après l'animation, supprimer les bâtonnets et afficher la question
+        // Après l'animation, griser les bâtonnets (ils restent visibles)
         setTimeout(() => {
-            toRemoveIndexes.sort((a, b) => b - a).forEach(idx => {
-                sticks[idx].remove();
+            toRemoveIndexes.forEach(idx => {
+                sticks[idx].classList.remove('leaving');
+                sticks[idx].classList.add('removed');
             });
 
-            instruction.innerHTML = `Il en reste combien ?`;
+            instruction.innerHTML = `Compte les bâtonnets <strong>en couleur</strong> !`;
 
             // Créer les boutons de réponse
             const answers = generateAnswerChoices(remaining, 1, 10);
@@ -406,9 +409,9 @@ function startSubtractionRound() {
                 btn.onclick = () => checkSubtractionAnswer(answer, btn);
                 answersContainer.appendChild(btn);
             });
-        }, toRemove * 200 + 600);
+        }, toRemove * 600 + 1200); // Délai total ajusté
 
-    }, total * 100 + 1000);
+    }, total * 100 + 1500); // Plus de temps pour observer les bâtonnets au départ
 }
 
 function checkSubtractionAnswer(answer, btn) {
