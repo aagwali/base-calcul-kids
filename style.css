@@ -248,10 +248,9 @@ body {
 /* Placeholder pour réserver l'espace de l'opération */
 .operation-placeholder {
     opacity: 0;
-    height: 92px; /* Hauteur fixe pour éviter le décalage */
-    min-height: 92px;
-    max-height: 92px;
-    overflow: hidden;
+    height: 120px; /* Hauteur fixe pour éviter le décalage */
+    min-height: 120px;
+    overflow: visible;
     transition: opacity 0.3s ease;
 }
 
