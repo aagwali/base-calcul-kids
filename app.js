@@ -356,8 +356,8 @@ function startSubtractionRound() {
     // Choisir une couleur
     const color = STICK_COLORS[Math.floor(Math.random() * STICK_COLORS.length)];
 
-    // Instruction initiale
-    instruction.innerHTML = `Il y a <strong>${total}</strong> bâtonnets...`;
+    // Instruction initiale - inviter l'enfant à placer ses bâtonnets
+    instruction.innerHTML = `Place <strong>${total}</strong> bâtonnets devant toi !`;
 
     // Créer tous les bâtonnets
     const sticks = [];
@@ -369,9 +369,12 @@ function startSubtractionRound() {
         sticks.push(stick);
     }
 
-    // Après un délai, faire partir certains bâtonnets
+    // Délai pour que l'enfant place ses bâtonnets (2 sec par bâton)
+    const countingDelay = total * 2000;
+
+    // Après le délai, annoncer la soustraction
     setTimeout(() => {
-        instruction.innerHTML = `<strong>${toRemove}</strong> s'en ${toRemove > 1 ? 'vont' : 'va'}... 👋`;
+        instruction.innerHTML = `<strong>${toRemove}</strong> s'en ${toRemove > 1 ? 'vont' : 'va'}... Décale-les ! 👋`;
 
         // Sélectionner aléatoirement les bâtonnets à enlever
         const toRemoveIndexes = [];
@@ -398,7 +401,7 @@ function startSubtractionRound() {
                 sticks[idx].classList.add('removed');
             });
 
-            instruction.innerHTML = `Compte les bâtonnets <strong>en couleur</strong> !`;
+            instruction.innerHTML = `Combien de bâtonnets <strong>en couleur</strong> ?`;
 
             // Créer les boutons de réponse
             const answers = generateAnswerChoices(remaining, 1, 10);
@@ -411,7 +414,7 @@ function startSubtractionRound() {
             });
         }, toRemove * 600 + 1200); // Délai total ajusté
 
-    }, total * 100 + 1500); // Plus de temps pour observer les bâtonnets au départ
+    }, countingDelay); // 2 secondes par bâton pour que l'enfant place les siens
 }
 
 function checkSubtractionAnswer(answer, btn) {
