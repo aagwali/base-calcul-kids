@@ -357,7 +357,7 @@ function startSubtractionRound() {
     const color = STICK_COLORS[Math.floor(Math.random() * STICK_COLORS.length)];
 
     // Instruction initiale - inviter l'enfant à placer ses bâtonnets
-    instruction.innerHTML = `Place <span class="big-number">${total}</span> bâtonnets devant toi !`;
+    instruction.innerHTML = `Place <span class="big-number ${color}">${total}</span> bâtonnets devant toi !`;
 
     // Créer tous les bâtonnets
     const sticks = [];
@@ -374,7 +374,7 @@ function startSubtractionRound() {
 
     // Après le délai, annoncer la soustraction
     setTimeout(() => {
-        instruction.innerHTML = `<span class="big-number">${toRemove}</span> s'en ${toRemove > 1 ? 'vont' : 'va'}... Décale-les ! 👋`;
+        instruction.innerHTML = `<span class="big-number gray">${toRemove}</span> s'en ${toRemove > 1 ? 'vont' : 'va'}... Décale-les ! 👋`;
 
         // Sélectionner aléatoirement les bâtonnets à enlever
         const toRemoveIndexes = [];
@@ -405,7 +405,7 @@ function startSubtractionRound() {
             instruction.innerHTML = `
                 <div class="operation-display">
                     <span class="big-number total ${color}">${total}</span>
-                    <span class="op-symbol minus">−</span>
+                    <span class="op-symbol minus"></span>
                     <span class="big-number removed-num">${toRemove}</span>
                     <span class="op-symbol">=</span>
                     <span class="big-number result">?</span>

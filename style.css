@@ -168,7 +168,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    gap: 8px;
+    gap: 15px;
     min-height: 150px;
     padding: 20px;
     background: #f9f9f9;
@@ -275,15 +275,19 @@ body {
     color: #333;
 }
 
-.big-number.removed-num {
-    background: linear-gradient(135deg, #bbb 0%, #888 100%);
-    color: white;
+/* Chiffre des bâtonnets retirés = GRIS */
+.big-number.removed-num,
+.operation-display .big-number.removed-num {
+    background: linear-gradient(135deg, #bbb 0%, #888 100%) !important;
+    color: white !important;
     box-shadow: 0 4px 15px rgba(150, 150, 150, 0.4);
 }
 
-.big-number.result {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+/* Résultat "?" = VIOLET */
+.big-number.result,
+.operation-display .big-number.result {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
     font-size: 3.5rem;
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     animation: pulse 1s ease infinite;
@@ -296,10 +300,22 @@ body {
     text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
 }
 
-/* Signe moins plus visible */
+/* Signe moins bien visible (trait épais à mi-hauteur) */
 .op-symbol.minus {
-    font-size: 4rem;
-    line-height: 0.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 60px;
+}
+
+.op-symbol.minus::after {
+    content: '';
+    display: block;
+    width: 30px;
+    height: 8px;
+    background: #333;
+    border-radius: 4px;
 }
 
 @keyframes popIn {
@@ -319,11 +335,28 @@ body {
     font-size: 2rem;
     min-width: 45px;
     height: 45px;
-    background: linear-gradient(135deg, #FF6B6B 0%, #ee5a5a 100%);
     color: white;
     border-radius: 10px;
     vertical-align: middle;
     margin: 0 5px;
+}
+
+/* Couleurs des chiffres dans les instructions */
+.instruction .big-number.red {
+    background: linear-gradient(135deg, #FF6B6B 0%, #cc5555 100%);
+}
+.instruction .big-number.blue {
+    background: linear-gradient(135deg, #5DADE2 0%, #4a9fcf 100%);
+}
+.instruction .big-number.green {
+    background: linear-gradient(135deg, #58D68D 0%, #48b577 100%);
+}
+.instruction .big-number.yellow {
+    background: linear-gradient(135deg, #F7DC6F 0%, #d4bc5e 100%);
+    color: #333;
+}
+.instruction .big-number.gray {
+    background: linear-gradient(135deg, #bbb 0%, #888 100%);
 }
 
 /* Conteneur des opérations (addition) */
