@@ -1,10 +1,8 @@
-run = "python3 -m http.server 8080"
 entrypoint = "index.html"
 language = "html"
 
-[nix]
-channel = "stable-24_05"
+[languages.html]
+pattern = "**/*.html"
 
-[[ports]]
-localPort = 8080
-externalPort = 80
+[languages.html.languageServer]
+start = ""
