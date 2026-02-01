@@ -247,12 +247,16 @@ body {
 
 /* Placeholder pour réserver l'espace de l'opération */
 .operation-placeholder {
-    visibility: hidden;
-    min-height: 90px;
+    opacity: 0;
+    height: 92px; /* Hauteur fixe pour éviter le décalage */
+    min-height: 92px;
+    max-height: 92px;
+    overflow: hidden;
+    transition: opacity 0.3s ease;
 }
 
 .operation-placeholder.visible {
-    visibility: visible;
+    opacity: 1;
 }
 
 .big-number {
@@ -774,5 +778,198 @@ body {
 @supports (-webkit-touch-callout: none) {
     .screen {
         padding-bottom: 30px;
+    }
+}
+
+/* ============================================ */
+/* ANIMATIONS DE CÉLÉBRATION (6 types)         */
+/* ============================================ */
+
+/* Conteneur des animations de célébration */
+.celebration-effects {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+/* Particule de base */
+.celebration-particle {
+    position: absolute;
+    pointer-events: none;
+}
+
+/* ============================================ */
+/* 1. CONFETTIS - Petits rectangles colorés    */
+/* ============================================ */
+.confetti {
+    width: 12px;
+    height: 18px;
+    border-radius: 3px;
+    animation: confetti-fall 3s ease-out forwards;
+}
+
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(-20px) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* ============================================ */
+/* 2. ÉTOILES - Étoiles scintillantes          */
+/* ============================================ */
+.star-particle {
+    font-size: 2.5rem;
+    animation: star-burst 2s ease-out forwards;
+}
+
+@keyframes star-burst {
+    0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5) rotate(180deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.5) rotate(360deg) translateY(-100px);
+        opacity: 0;
+    }
+}
+
+/* ============================================ */
+/* 3. CŒURS - Cœurs qui flottent               */
+/* ============================================ */
+.heart-particle {
+    font-size: 2rem;
+    animation: heart-float 2.5s ease-out forwards;
+}
+
+@keyframes heart-float {
+    0% {
+        transform: translateY(0) scale(0);
+        opacity: 1;
+    }
+    30% {
+        transform: translateY(-50px) scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-200px) scale(0.8);
+        opacity: 0;
+    }
+}
+
+/* ============================================ */
+/* 4. BALLONS - Ballons qui montent            */
+/* ============================================ */
+.balloon-particle {
+    font-size: 3rem;
+    animation: balloon-rise 3s ease-out forwards;
+}
+
+@keyframes balloon-rise {
+    0% {
+        transform: translateY(100px) scale(0) rotate(-10deg);
+        opacity: 0;
+    }
+    20% {
+        transform: translateY(50px) scale(1) rotate(10deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100vh) scale(0.8) rotate(-5deg);
+        opacity: 0.5;
+    }
+}
+
+/* ============================================ */
+/* 5. FEU D'ARTIFICE - Explosion de sparkles   */
+/* ============================================ */
+.firework-particle {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: firework-explode 1.5s ease-out forwards;
+}
+
+@keyframes firework-explode {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    30% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.3) translateY(100px);
+        opacity: 0;
+    }
+}
+
+/* ============================================ */
+/* 6. BULLES - Bulles qui flottent             */
+/* ============================================ */
+.bubble-particle {
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(100,200,255,0.3));
+    border: 2px solid rgba(255,255,255,0.5);
+    animation: bubble-float 2.5s ease-out forwards;
+}
+
+@keyframes bubble-float {
+    0% {
+        transform: translateY(50px) scale(0);
+        opacity: 0;
+    }
+    20% {
+        transform: translateY(20px) scale(1);
+        opacity: 0.8;
+    }
+    80% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateY(-150px) scale(1.2);
+        opacity: 0;
+    }
+}
+
+/* Animation de wiggle pour les bulles */
+.bubble-particle.wiggle {
+    animation: bubble-float-wiggle 2.5s ease-out forwards;
+}
+
+@keyframes bubble-float-wiggle {
+    0% {
+        transform: translateY(50px) translateX(0) scale(0);
+        opacity: 0;
+    }
+    20% {
+        transform: translateY(20px) translateX(-10px) scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translateY(-50px) translateX(10px) scale(1.1);
+        opacity: 0.7;
+    }
+    80% {
+        transform: translateY(-100px) translateX(-5px) scale(1.15);
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateY(-150px) translateX(0) scale(1.2);
+        opacity: 0;
     }
 }

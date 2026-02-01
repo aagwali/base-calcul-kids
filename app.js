@@ -192,19 +192,10 @@ function startGame(gameType) {
 
 function continueGame() {
     playClickSound();
-    showScreen(gameState.currentGame + '-screen');
-
-    switch(gameState.currentGame) {
-        case 'counting':
-            startCountingRound();
-            break;
-        case 'addition':
-            startAdditionRound();
-            break;
-        case 'subtraction':
-            startSubtractionRound();
-            break;
-    }
+    // Retour au menu principal après une session de 5 questions
+    showScreen('menu-screen');
+    gameState.currentGame = null;
+    gameState.roundsPlayed = 0;
 }
 
 // ============================================
@@ -251,6 +242,7 @@ function checkCountingAnswer(answer, btn) {
         // Bonne réponse
         btn.classList.add('correct');
         playSuccessSound();
+        playCelebrationAnimation(); // Animation festive !
         feedback.textContent = getSuccessMessage();
         feedback.className = 'feedback success';
         gameState.scores.counting++;
@@ -442,6 +434,7 @@ function checkAdditionStep(answer, btn, step) {
             totalBox.style.background = '#58D68D';
             totalBox.style.color = 'white';
 
+            playCelebrationAnimation(); // Animation festive !
             feedback.textContent = getSuccessMessage();
             feedback.className = 'feedback success';
             gameState.scores.addition++;
@@ -576,6 +569,7 @@ function checkSubtractionAnswer(answer, btn) {
         // Bonne réponse
         btn.classList.add('correct');
         playSuccessSound();
+        playCelebrationAnimation(); // Animation festive !
         feedback.textContent = getSuccessMessage();
         feedback.className = 'feedback success';
         gameState.scores.subtraction++;
@@ -695,6 +689,213 @@ document.addEventListener('touchend', function(e) {
     }
     this.lastTouchEnd = now;
 }, false);
+
+// ============================================
+// ANIMATIONS DE CÉLÉBRATION (6 types)
+// ============================================
+
+// Compteur pour alterner les animations
+let celebrationAnimationIndex = 0;
+
+// Couleurs vives pour les animations
+const CELEBRATION_COLORS = [
+    '#FF6B6B', '#4ECDC4', '#FFE66D', '#95E1D3',
+    '#F38181', '#AA96DA', '#FCBAD3', '#A8D8EA'
+];
+
+// Créer le conteneur des effets de célébration
+function getCelebrationContainer() {
+    let container = document.querySelector('.celebration-effects');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'celebration-effects';
+        document.body.appendChild(container);
+    }
+    return container;
+}
+
+// Nettoyer les anciennes particules
+function clearCelebration() {
+    const container = document.querySelector('.celebration-effects');
+    if (container) {
+        container.innerHTML = '';
+    }
+}
+
+// Animation 1: CONFETTIS
+function showConfetti() {
+    const container = getCelebrationContainer();
+    clearCelebration();
+
+    for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'celebration-particle confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.backgroundColor = CELEBRATION_COLORS[Math.floor(Math.random() * CELEBRATION_COLORS.length)];
+        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+        confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+        container.appendChild(confetti);
+    }
+
+    setTimeout(clearCelebration, 3500);
+}
+
+// Animation 2: ÉTOILES
+function showStars() {
+    const container = getCelebrationContainer();
+    clearCelebration();
+
+    const stars = ['⭐', '🌟', '✨', '💫'];
+
+    for (let i = 0; i < 20; i++) {
+        const star = document.createElement('div');
+        star.className = 'celebration-particle star-particle';
+        star.textContent = stars[Math.floor(Math.random() * stars.length)];
+        star.style.left = (10 + Math.random() * 80) + '%';
+        star.style.top = (30 + Math.random() * 40) + '%';
+        star.style.animationDelay = Math.random() * 0.3 + 's';
+        container.appendChild(star);
+    }
+
+    setTimeout(clearCelebration, 2500);
+}
+
+// Animation 3: CŒURS
+function showHearts() {
+    const container = getCelebrationContainer();
+    clearCelebration();
+
+    const hearts = ['❤️', '💕', '💗', '💖', '💝'];
+
+    for (let i = 0; i < 15; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'celebration-particle heart-particle';
+        heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        heart.style.left = (10 + Math.random() * 80) + '%';
+        heart.style.top = (50 + Math.random() * 30) + '%';
+        heart.style.animationDelay = Math.random() * 0.4 + 's';
+        heart.style.fontSize = (1.5 + Math.random() * 1.5) + 'rem';
+        container.appendChild(heart);
+    }
+
+    setTimeout(clearCelebration, 3000);
+}
+
+// Animation 4: BALLONS
+function showBalloons() {
+    const container = getCelebrationContainer();
+    clearCelebration();
+
+    const balloons = ['🎈', '🎈', '🎈', '🎈'];
+    const balloonColors = ['red', 'blue', 'green', 'yellow', 'purple'];
+
+    for (let i = 0; i < 12; i++) {
+        const balloon = document.createElement('div');
+        balloon.className = 'celebration-particle balloon-particle';
+        balloon.textContent = '🎈';
+        balloon.style.left = (5 + Math.random() * 90) + '%';
+        balloon.style.top = '100%';
+        balloon.style.animationDelay = Math.random() * 0.5 + 's';
+        balloon.style.fontSize = (2.5 + Math.random() * 1.5) + 'rem';
+        container.appendChild(balloon);
+    }
+
+    setTimeout(clearCelebration, 3500);
+}
+
+// Animation 5: FEU D'ARTIFICE
+function showFireworks() {
+    const container = getCelebrationContainer();
+    clearCelebration();
+
+    // Créer 3 explosions à différents endroits
+    const explosions = [
+        { x: 30, y: 30 },
+        { x: 70, y: 40 },
+        { x: 50, y: 25 }
+    ];
+
+    explosions.forEach((pos, explosionIndex) => {
+        setTimeout(() => {
+            const color = CELEBRATION_COLORS[Math.floor(Math.random() * CELEBRATION_COLORS.length)];
+
+            for (let i = 0; i < 20; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'celebration-particle firework-particle';
+
+                const angle = (Math.PI * 2 / 20) * i;
+                const distance = 50 + Math.random() * 100;
+                const endX = Math.cos(angle) * distance;
+                const endY = Math.sin(angle) * distance;
+
+                spark.style.left = pos.x + '%';
+                spark.style.top = pos.y + '%';
+                spark.style.backgroundColor = color;
+                spark.style.setProperty('--endX', endX + 'px');
+                spark.style.setProperty('--endY', endY + 'px');
+                spark.style.animation = `firework-spark-${i % 4} 1.2s ease-out forwards`;
+
+                // Animation personnalisée inline
+                spark.animate([
+                    { transform: 'scale(0)', opacity: 1 },
+                    { transform: 'scale(1.5)', opacity: 1, offset: 0.2 },
+                    { transform: `translate(${endX}px, ${endY}px) scale(0.3)`, opacity: 0 }
+                ], {
+                    duration: 1200,
+                    easing: 'ease-out',
+                    fill: 'forwards'
+                });
+
+                container.appendChild(spark);
+            }
+
+            // Petit son pour chaque explosion
+            playTone(800 + explosionIndex * 100, 0.1, 'sine', 0.15);
+        }, explosionIndex * 300);
+    });
+
+    setTimeout(clearCelebration, 2500);
+}
+
+// Animation 6: BULLES
+function showBubbles() {
+    const container = getCelebrationContainer();
+    clearCelebration();
+
+    for (let i = 0; i < 20; i++) {
+        const bubble = document.createElement('div');
+        bubble.className = 'celebration-particle bubble-particle';
+        if (Math.random() > 0.5) bubble.classList.add('wiggle');
+
+        const size = 20 + Math.random() * 40;
+        bubble.style.width = size + 'px';
+        bubble.style.height = size + 'px';
+        bubble.style.left = (5 + Math.random() * 90) + '%';
+        bubble.style.top = (60 + Math.random() * 30) + '%';
+        bubble.style.animationDelay = Math.random() * 0.5 + 's';
+        bubble.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+        container.appendChild(bubble);
+    }
+
+    setTimeout(clearCelebration, 3500);
+}
+
+// Tableau des animations disponibles
+const celebrationAnimations = [
+    showConfetti,
+    showStars,
+    showHearts,
+    showBalloons,
+    showFireworks,
+    showBubbles
+];
+
+// Fonction principale pour jouer une animation de célébration
+// Alterne entre les 6 animations
+function playCelebrationAnimation() {
+    celebrationAnimations[celebrationAnimationIndex]();
+    celebrationAnimationIndex = (celebrationAnimationIndex + 1) % celebrationAnimations.length;
+}
 
 // Log de démarrage
 console.log('🎮 Jeu des Bâtonnets chargé et prêt !');
