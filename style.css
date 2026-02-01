@@ -256,29 +256,50 @@ body {
 }
 
 .big-number.total {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* Couleurs du total selon la couleur des bâtonnets */
+.big-number.total.red {
+    background: linear-gradient(135deg, #FF6B6B 0%, #cc5555 100%);
+}
+.big-number.total.blue {
+    background: linear-gradient(135deg, #5DADE2 0%, #4a9fcf 100%);
+}
+.big-number.total.green {
+    background: linear-gradient(135deg, #58D68D 0%, #48b577 100%);
+}
+.big-number.total.yellow {
+    background: linear-gradient(135deg, #F7DC6F 0%, #d4bc5e 100%);
+    color: #333;
 }
 
 .big-number.removed-num {
-    background: linear-gradient(135deg, #FF6B6B 0%, #ee5a5a 100%);
+    background: linear-gradient(135deg, #bbb 0%, #888 100%);
     color: white;
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    box-shadow: 0 4px 15px rgba(150, 150, 150, 0.4);
 }
 
 .big-number.result {
-    background: linear-gradient(135deg, #58D68D 0%, #48b577 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     font-size: 3.5rem;
-    box-shadow: 0 4px 15px rgba(88, 214, 141, 0.4);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     animation: pulse 1s ease infinite;
 }
 
 .op-symbol {
-    font-size: 2.5rem;
-    font-weight: bold;
+    font-size: 3rem;
+    font-weight: 900;
     color: #333;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Signe moins plus visible */
+.op-symbol.minus {
+    font-size: 4rem;
+    line-height: 0.5;
 }
 
 @keyframes popIn {

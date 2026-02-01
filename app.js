@@ -404,8 +404,8 @@ function startSubtractionRound() {
             // Afficher l'opération de manière ludique
             instruction.innerHTML = `
                 <div class="operation-display">
-                    <span class="big-number total">${total}</span>
-                    <span class="op-symbol">−</span>
+                    <span class="big-number total ${color}">${total}</span>
+                    <span class="op-symbol minus">−</span>
                     <span class="big-number removed-num">${toRemove}</span>
                     <span class="op-symbol">=</span>
                     <span class="big-number result">?</span>
