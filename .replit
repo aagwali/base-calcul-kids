@@ -1,0 +1,12 @@
+run = "npx serve ."
+entrypoint = "index.html"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "npx serve ."]
+
+[[ports]]
+localPort = 3000
+externalPort = 80

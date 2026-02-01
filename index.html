@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Jeu des Bâtonnets - Apprends à compter!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Écran d'accueil -->
+    <div id="menu-screen" class="screen active">
+        <h1>🎯 Jeu des Bâtonnets</h1>
+        <p class="subtitle">Choisis une activité !</p>
+        <div class="menu-buttons">
+            <button class="menu-btn counting-btn" onclick="startGame('counting')">
+                <span class="btn-icon">🔢</span>
+                <span class="btn-text">Compte les bâtonnets</span>
+            </button>
+            <button class="menu-btn addition-btn" onclick="startGame('addition')">
+                <span class="btn-icon">➕</span>
+                <span class="btn-text">La machine à additionner</span>
+            </button>
+            <button class="menu-btn subtraction-btn" onclick="startGame('subtraction')">
+                <span class="btn-icon">➖</span>
+                <span class="btn-text">Il en reste combien ?</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Écran de jeu: Comptage -->
+    <div id="counting-screen" class="screen game-screen">
+        <div class="game-header">
+            <button class="back-btn" onclick="goToMenu()">⬅️ Menu</button>
+            <div class="score-display">⭐ <span id="counting-score">0</span></div>
+        </div>
+        <h2>Compte les bâtonnets !</h2>
+        <p class="instruction">Combien y a-t-il de bâtonnets ?<br><small>Place le bon chiffre avec tes blocs, puis touche la réponse !</small></p>
+        <div id="counting-sticks" class="sticks-container"></div>
+        <div id="counting-answers" class="answers-container"></div>
+        <div id="counting-feedback" class="feedback"></div>
+    </div>
+
+    <!-- Écran de jeu: Addition -->
+    <div id="addition-screen" class="screen game-screen">
+        <div class="game-header">
+            <button class="back-btn" onclick="goToMenu()">⬅️ Menu</button>
+            <div class="score-display">⭐ <span id="addition-score">0</span></div>
+        </div>
+        <h2>La machine à additionner !</h2>
+        <p class="instruction">Utilise tes bâtonnets pour trouver le résultat !</p>
+        <div class="operation-container">
+            <div id="addition-group1" class="sticks-group"></div>
+            <div class="operator">+</div>
+            <div id="addition-group2" class="sticks-group"></div>
+            <div class="operator">=</div>
+            <div class="result-box">?</div>
+        </div>
+        <div id="addition-answers" class="answers-container"></div>
+        <div id="addition-feedback" class="feedback"></div>
+    </div>
+
+    <!-- Écran de jeu: Soustraction -->
+    <div id="subtraction-screen" class="screen game-screen">
+        <div class="game-header">
+            <button class="back-btn" onclick="goToMenu()">⬅️ Menu</button>
+            <div class="score-display">⭐ <span id="subtraction-score">0</span></div>
+        </div>
+        <h2>Il en reste combien ?</h2>
+        <p class="instruction" id="subtraction-instruction">Regarde bien...</p>
+        <div id="subtraction-sticks" class="sticks-container subtraction-sticks"></div>
+        <div id="subtraction-answers" class="answers-container"></div>
+        <div id="subtraction-feedback" class="feedback"></div>
+    </div>
+
+    <!-- Écran de célébration -->
+    <div id="celebration-screen" class="screen">
+        <div class="celebration-content">
+            <h1 id="celebration-text">🎉 Bravo !</h1>
+            <div class="stars-animation">⭐⭐⭐</div>
+            <button class="continue-btn" onclick="continueGame()">Continuer ➡️</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
