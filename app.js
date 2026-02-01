@@ -12,11 +12,79 @@ const gameState = {
         subtraction: 0
     },
     currentAnswer: 0,
-    roundsPlayed: 0
+    roundsPlayed: 0,
+    // Pour l'addition en 3 étapes
+    additionStep: 0,
+    additionNum1: 0,
+    additionNum2: 0,
+    additionColor1: '',
+    additionColor2: ''
 };
 
 // Couleurs des bâtonnets (comme dans le jeu physique)
 const STICK_COLORS = ['red', 'blue', 'green', 'yellow'];
+
+// ============================================
+// FONCTION UTILITAIRE : GROUPEMENT DES BÂTONNETS
+// ============================================
+
+// Divise un nombre en groupes de 2-5 pour faciliter le comptage visuel
+// Retourne un tableau de tailles de groupes. Ex: 7 → [3, 4] ou [2, 5]
+function splitIntoGroups(total) {
+    if (total <= 5) {
+        return [total]; // Un seul groupe
+    }
+
+    if (total <= 10) {
+        // 2 groupes de préférence
+        // On essaie de faire des groupes équilibrés entre 2 et 5
+        const half = Math.floor(total / 2);
+        const group1 = Math.max(2, Math.min(5, half));
+        const group2 = total - group1;
+
+        // Si group2 > 5, on ajuste
+        if (group2 > 5) {
+            return [5, total - 5];
+        }
+        return [group1, group2];
+    }
+
+    // Pour > 10 (ne devrait pas arriver mais au cas où)
+    const groups = [];
+    let remaining = total;
+    while (remaining > 0) {
+        const groupSize = Math.min(5, remaining);
+        groups.push(groupSize);
+        remaining -= groupSize;
+    }
+    return groups;
+}
+
+// Crée les bâtonnets groupés dans un conteneur
+function createGroupedSticks(container, total, color, animationDelay = 0) {
+    const groups = splitIntoGroups(total);
+    const sticks = [];
+    let stickIndex = 0;
+
+    groups.forEach((groupSize, groupIndex) => {
+        // Créer un wrapper pour le groupe
+        const groupWrapper = document.createElement('div');
+        groupWrapper.className = 'stick-group-wrapper';
+
+        for (let i = 0; i < groupSize; i++) {
+            const stick = document.createElement('div');
+            stick.className = `stick ${color} appearing`;
+            stick.style.animationDelay = `${(stickIndex + animationDelay) * 0.1}s`;
+            groupWrapper.appendChild(stick);
+            sticks.push(stick);
+            stickIndex++;
+        }
+
+        container.appendChild(groupWrapper);
+    });
+
+    return sticks;
+}
 
 // ============================================
 // SYSTÈME DE SONS (Web Audio API)
@@ -166,16 +234,10 @@ function startCountingRound() {
     // Choisir une couleur aléatoire
     const color = STICK_COLORS[Math.floor(Math.random() * STICK_COLORS.length)];
 
-    // Créer les bâtonnets avec animation
-    for (let i = 0; i < count; i++) {
-        setTimeout(() => {
-            const stick = document.createElement('div');
-            stick.className = `stick ${color} appearing`;
-            container.appendChild(stick);
-        }, i * 100);
-    }
+    // Créer les bâtonnets groupés pour faciliter le comptage
+    createGroupedSticks(container, count, color);
 
-    // Créer les boutons de réponse (3 choix)
+    // Créer les boutons de réponse (4 choix)
     const answers = generateAnswerChoices(count, 1, 10);
     answers.forEach(answer => {
         const btn = document.createElement('button');
@@ -225,18 +287,19 @@ function checkCountingAnswer(answer, btn) {
 }
 
 // ============================================
-// ACTIVITÉ 2: LA MACHINE À ADDITIONNER
+// ACTIVITÉ 2: LA MACHINE À ADDITIONNER (3 étapes)
 // ============================================
 
 function startAdditionRound() {
-    const group1 = document.getElementById('addition-group1');
-    const group2 = document.getElementById('addition-group2');
+    const sticksContainer = document.getElementById('addition-sticks-container');
+    const operationContainer = document.getElementById('addition-operation');
     const answersContainer = document.getElementById('addition-answers');
     const feedback = document.getElementById('addition-feedback');
+    const instruction = document.getElementById('addition-instruction');
 
     // Vider les conteneurs
-    group1.innerHTML = '';
-    group2.innerHTML = '';
+    sticksContainer.innerHTML = '';
+    operationContainer.innerHTML = '';
     answersContainer.innerHTML = '';
     feedback.innerHTML = '';
     feedback.className = 'feedback';
@@ -245,79 +308,206 @@ function startAdditionRound() {
     const num1 = Math.floor(Math.random() * 5) + 1; // 1-5
     const maxNum2 = Math.min(5, 10 - num1);
     const num2 = Math.floor(Math.random() * maxNum2) + 1; // 1 à (10-num1)
-    const sum = num1 + num2;
-    gameState.currentAnswer = sum;
 
     // Choisir deux couleurs différentes
     const colors = [...STICK_COLORS].sort(() => Math.random() - 0.5);
-    const color1 = colors[0];
-    const color2 = colors[1];
 
-    // Créer les bâtonnets du premier groupe
-    for (let i = 0; i < num1; i++) {
-        setTimeout(() => {
-            const stick = document.createElement('div');
-            stick.className = `stick ${color1} appearing`;
-            group1.appendChild(stick);
-        }, i * 100);
-    }
+    // Stocker dans gameState pour les étapes suivantes
+    gameState.additionNum1 = num1;
+    gameState.additionNum2 = num2;
+    gameState.additionColor1 = colors[0];
+    gameState.additionColor2 = colors[1];
+    gameState.additionStep = 1;
 
-    // Créer les bâtonnets du deuxième groupe
-    for (let i = 0; i < num2; i++) {
-        setTimeout(() => {
-            const stick = document.createElement('div');
-            stick.className = `stick ${color2} appearing`;
-            group2.appendChild(stick);
-        }, (num1 + i) * 100);
-    }
+    // Créer la structure visuelle : bâtonnets en bas, opération au-dessus
+    // Groupe 1
+    const group1Wrapper = document.createElement('div');
+    group1Wrapper.className = 'addition-group';
+    group1Wrapper.id = 'add-group1';
 
-    // Créer les boutons de réponse
+    const sticks1Container = document.createElement('div');
+    sticks1Container.className = 'sticks-box';
+    createGroupedSticks(sticks1Container, num1, gameState.additionColor1);
+
+    const number1Box = document.createElement('div');
+    number1Box.className = 'number-box';
+    number1Box.id = 'add-num1';
+    number1Box.innerHTML = '<span class="result-box">?</span>';
+
+    group1Wrapper.appendChild(number1Box);
+    group1Wrapper.appendChild(sticks1Container);
+
+    // Opérateur +
+    const plusOperator = document.createElement('div');
+    plusOperator.className = 'op-symbol-vertical';
+    plusOperator.textContent = '+';
+
+    // Groupe 2
+    const group2Wrapper = document.createElement('div');
+    group2Wrapper.className = 'addition-group';
+    group2Wrapper.id = 'add-group2';
+
+    const sticks2Container = document.createElement('div');
+    sticks2Container.className = 'sticks-box';
+    createGroupedSticks(sticks2Container, num2, gameState.additionColor2, num1);
+
+    const number2Box = document.createElement('div');
+    number2Box.className = 'number-box';
+    number2Box.id = 'add-num2';
+    number2Box.innerHTML = '<span class="result-box">?</span>';
+
+    group2Wrapper.appendChild(number2Box);
+    group2Wrapper.appendChild(sticks2Container);
+
+    // Opérateur =
+    const equalsOperator = document.createElement('div');
+    equalsOperator.className = 'op-symbol-vertical';
+    equalsOperator.textContent = '=';
+
+    // Résultat
+    const resultWrapper = document.createElement('div');
+    resultWrapper.className = 'addition-group result-group';
+    resultWrapper.id = 'add-result';
+
+    const resultBox = document.createElement('div');
+    resultBox.className = 'number-box';
+    resultBox.id = 'add-total';
+    resultBox.innerHTML = '<span class="result-box result-final">?</span>';
+
+    resultWrapper.appendChild(resultBox);
+
+    // Assembler
+    sticksContainer.appendChild(group1Wrapper);
+    sticksContainer.appendChild(plusOperator);
+    sticksContainer.appendChild(group2Wrapper);
+    sticksContainer.appendChild(equalsOperator);
+    sticksContainer.appendChild(resultWrapper);
+
+    // Instruction et première question
+    instruction.innerHTML = `Compte les bâtonnets <span class="big-number ${gameState.additionColor1}">?</span>`;
+    showAdditionStep1Choices();
+}
+
+function showAdditionStep1Choices() {
+    const answersContainer = document.getElementById('addition-answers');
+    answersContainer.innerHTML = '';
+
+    gameState.currentAnswer = gameState.additionNum1;
+
+    const answers = generateAnswerChoices(gameState.additionNum1, 1, 10);
+    answers.forEach(answer => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-btn';
+        btn.textContent = answer;
+        btn.onclick = () => checkAdditionStep(answer, btn, 1);
+        answersContainer.appendChild(btn);
+    });
+}
+
+function showAdditionStep2Choices() {
+    const answersContainer = document.getElementById('addition-answers');
+    const instruction = document.getElementById('addition-instruction');
+    answersContainer.innerHTML = '';
+
+    gameState.currentAnswer = gameState.additionNum2;
+    gameState.additionStep = 2;
+
+    instruction.innerHTML = `Compte les bâtonnets <span class="big-number ${gameState.additionColor2}">?</span>`;
+
+    const answers = generateAnswerChoices(gameState.additionNum2, 1, 10);
+    answers.forEach(answer => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-btn';
+        btn.textContent = answer;
+        btn.onclick = () => checkAdditionStep(answer, btn, 2);
+        answersContainer.appendChild(btn);
+    });
+}
+
+function showAdditionStep3Choices() {
+    const answersContainer = document.getElementById('addition-answers');
+    const instruction = document.getElementById('addition-instruction');
+    answersContainer.innerHTML = '';
+
+    const sum = gameState.additionNum1 + gameState.additionNum2;
+    gameState.currentAnswer = sum;
+    gameState.additionStep = 3;
+
+    instruction.innerHTML = `<span class="big-number ${gameState.additionColor1}">${gameState.additionNum1}</span> + <span class="big-number ${gameState.additionColor2}">${gameState.additionNum2}</span> = <span class="big-number violet">?</span>`;
+
     const answers = generateAnswerChoices(sum, 2, 10);
     answers.forEach(answer => {
         const btn = document.createElement('button');
         btn.className = 'answer-btn';
         btn.textContent = answer;
-        btn.onclick = () => checkAdditionAnswer(answer, btn);
+        btn.onclick = () => checkAdditionStep(answer, btn, 3);
         answersContainer.appendChild(btn);
     });
 }
 
-function checkAdditionAnswer(answer, btn) {
+function checkAdditionStep(answer, btn, step) {
     const feedback = document.getElementById('addition-feedback');
-    const resultBox = document.querySelector('.result-box');
     const allButtons = document.querySelectorAll('#addition-answers .answer-btn');
 
     if (answer === gameState.currentAnswer) {
-        // Bonne réponse
         btn.classList.add('correct');
-        resultBox.textContent = answer;
-        resultBox.style.borderStyle = 'solid';
-        resultBox.style.background = '#58D68D';
-        resultBox.style.color = 'white';
         playSuccessSound();
-        feedback.textContent = getSuccessMessage();
-        feedback.className = 'feedback success';
-        gameState.scores.addition++;
-        updateScore('addition');
-
         allButtons.forEach(b => b.disabled = true);
 
-        gameState.roundsPlayed++;
-        setTimeout(() => {
-            // Réinitialiser la boîte de résultat
-            resultBox.textContent = '?';
-            resultBox.style.borderStyle = 'dashed';
-            resultBox.style.background = 'white';
-            resultBox.style.color = '#667eea';
+        if (step === 1) {
+            // Révéler le premier nombre
+            const num1Box = document.querySelector('#add-num1 .result-box');
+            num1Box.textContent = answer;
+            num1Box.classList.add(gameState.additionColor1);
+            num1Box.style.borderStyle = 'solid';
 
-            if (gameState.roundsPlayed >= 5) {
-                showCelebration();
-            } else {
-                startAdditionRound();
-            }
-        }, 1500);
+            feedback.textContent = getSuccessMessage();
+            feedback.className = 'feedback success';
+
+            setTimeout(() => {
+                feedback.innerHTML = '';
+                showAdditionStep2Choices();
+            }, 1000);
+
+        } else if (step === 2) {
+            // Révéler le deuxième nombre
+            const num2Box = document.querySelector('#add-num2 .result-box');
+            num2Box.textContent = answer;
+            num2Box.classList.add(gameState.additionColor2);
+            num2Box.style.borderStyle = 'solid';
+
+            feedback.textContent = getSuccessMessage();
+            feedback.className = 'feedback success';
+
+            setTimeout(() => {
+                feedback.innerHTML = '';
+                showAdditionStep3Choices();
+            }, 1000);
+
+        } else if (step === 3) {
+            // Révéler le résultat final
+            const totalBox = document.querySelector('#add-total .result-box');
+            totalBox.textContent = answer;
+            totalBox.style.borderStyle = 'solid';
+            totalBox.style.background = '#58D68D';
+            totalBox.style.color = 'white';
+
+            feedback.textContent = getSuccessMessage();
+            feedback.className = 'feedback success';
+            gameState.scores.addition++;
+            updateScore('addition');
+
+            gameState.roundsPlayed++;
+
+            setTimeout(() => {
+                if (gameState.roundsPlayed >= 5) {
+                    showCelebration();
+                } else {
+                    startAdditionRound();
+                }
+            }, 4000);
+        }
     } else {
-        // Mauvaise réponse
         btn.classList.add('wrong');
         playErrorSound();
         feedback.textContent = getEncouragementMessage();
@@ -326,7 +516,7 @@ function checkAdditionAnswer(answer, btn) {
         setTimeout(() => {
             btn.classList.remove('wrong');
             btn.disabled = true;
-            feedback.textContent = 'Compte tous les bâtonnets !';
+            feedback.textContent = 'Compte bien les bâtonnets !';
         }, 800);
     }
 }
@@ -357,19 +547,13 @@ function startSubtractionRound() {
 
     // Choisir une couleur
     const color = STICK_COLORS[Math.floor(Math.random() * STICK_COLORS.length)];
+    gameState.subtractionColor = color;
 
     // Instruction initiale - inviter l'enfant à placer ses bâtonnets
     instruction.innerHTML = `Place <span class="big-number ${color}">${total}</span> bâtonnets devant toi !`;
 
-    // Créer tous les bâtonnets
-    const sticks = [];
-    for (let i = 0; i < total; i++) {
-        const stick = document.createElement('div');
-        stick.className = `stick ${color} appearing`;
-        stick.style.animationDelay = `${i * 0.1}s`;
-        container.appendChild(stick);
-        sticks.push(stick);
-    }
+    // Créer tous les bâtonnets groupés
+    const sticks = createGroupedSticks(container, total, color);
 
     // Délai pour que l'enfant place ses bâtonnets (3 sec par bâton)
     const countingDelay = total * 3000;
@@ -403,7 +587,7 @@ function startSubtractionRound() {
                 sticks[idx].classList.add('removed');
             });
 
-            // Afficher l'opération de manière ludique (même style que l'addition)
+            // Afficher l'opération de manière ludique
             instruction.innerHTML = `
                 <div class="operation-display">
                     <span class="big-number total ${color}">${total}</span>

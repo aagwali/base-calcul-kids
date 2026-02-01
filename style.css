@@ -560,6 +560,136 @@ body {
     position: relative;
 }
 
+/* ============================================ */
+/* GROUPEMENT DES BÂTONNETS                     */
+/* ============================================ */
+
+/* Wrapper pour un groupe de bâtonnets (avec espace entre groupes) */
+.stick-group-wrapper {
+    display: flex;
+    gap: 6px;
+    padding: 0 12px;
+    align-items: flex-end;
+}
+
+.stick-group-wrapper:first-child {
+    padding-left: 0;
+}
+
+.stick-group-wrapper:last-child {
+    padding-right: 0;
+}
+
+/* ============================================ */
+/* ADDITION - NOUVELLE MISE EN PAGE             */
+/* ============================================ */
+
+/* Layout principal de l'addition : horizontal avec groupes */
+.addition-layout {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 8px;
+    width: 100%;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 20px;
+    flex-wrap: wrap;
+}
+
+/* Groupe : chiffre au-dessus + bâtonnets en dessous */
+.addition-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Box pour le chiffre au-dessus des bâtonnets */
+.number-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Box contenant les bâtonnets */
+.sticks-box {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 5px;
+    padding: 10px 15px;
+    background: white;
+    border-radius: 15px;
+    min-height: 100px;
+    min-width: 50px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.sticks-box .stick {
+    height: 80px;
+    width: 14px;
+}
+
+.sticks-box .stick-group-wrapper {
+    padding: 0 8px;
+}
+
+/* Opérateur vertical (entre les groupes) */
+.op-symbol-vertical {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    padding: 0 5px;
+    align-self: center;
+}
+
+/* Groupe résultat (sans bâtonnets) */
+.result-group {
+    justify-content: center;
+}
+
+.result-group .number-box {
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+}
+
+/* Result box avec couleurs de bâtonnets */
+.result-box.red {
+    background: linear-gradient(135deg, #FF6B6B 0%, #cc5555 100%) !important;
+    color: white !important;
+    border-color: #cc5555 !important;
+}
+
+.result-box.blue {
+    background: linear-gradient(135deg, #5DADE2 0%, #4a9fcf 100%) !important;
+    color: white !important;
+    border-color: #4a9fcf !important;
+}
+
+.result-box.green {
+    background: linear-gradient(135deg, #58D68D 0%, #48b577 100%) !important;
+    color: white !important;
+    border-color: #48b577 !important;
+}
+
+.result-box.yellow {
+    background: linear-gradient(135deg, #F7DC6F 0%, #d4bc5e 100%) !important;
+    color: #333 !important;
+    border-color: #d4bc5e !important;
+}
+
+/* Result box final (violet) */
+.result-box.result-final {
+    border-color: #667eea;
+}
+
+/* Chiffre violet dans les instructions */
+.instruction .big-number.violet {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
 /* Responsive pour petits écrans */
 @media (max-height: 700px) {
     .screen {
