@@ -387,7 +387,7 @@ function showAdditionStep3Choices() {
     gameState.currentAnswer = sum;
     gameState.additionStep = 3;
 
-    instruction.innerHTML = `<span class="big-number ${gameState.additionColor1}">${gameState.additionNum1}</span> + <span class="big-number ${gameState.additionColor2}">${gameState.additionNum2}</span> = <span class="big-number violet">?</span>`;
+    instruction.innerHTML = `Compte-les tous !`;
 
     const answers = generateAnswerChoices(sum, 2, 10);
     answers.forEach(answer => {
