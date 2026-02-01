@@ -28,32 +28,27 @@ const STICK_COLORS = ['red', 'blue', 'green', 'yellow'];
 // FONCTION UTILITAIRE : GROUPEMENT DES BÂTONNETS
 // ============================================
 
-// Divise un nombre en groupes de 2-5 pour faciliter le comptage visuel
-// Retourne un tableau de tailles de groupes. Ex: 7 → [3, 4] ou [2, 5]
+// Divise un nombre en groupes de 2-4 pour faciliter le comptage visuel
+// Évite les groupes de 5 qui sont difficiles à compter
+// Retourne un tableau de tailles de groupes. Ex: 7 → [3, 4], 9 → [3, 3, 3]
 function splitIntoGroups(total) {
-    if (total <= 5) {
+    if (total <= 4) {
         return [total]; // Un seul groupe
     }
 
-    if (total <= 10) {
-        // 2 groupes de préférence
-        // On essaie de faire des groupes équilibrés entre 2 et 5
-        const half = Math.floor(total / 2);
-        const group1 = Math.max(2, Math.min(5, half));
-        const group2 = total - group1;
-
-        // Si group2 > 5, on ajuste
-        if (group2 > 5) {
-            return [5, total - 5];
-        }
-        return [group1, group2];
-    }
+    // Cas spéciaux pour éviter les groupes de 5
+    if (total === 5) return [2, 3];
+    if (total === 6) return [3, 3];
+    if (total === 7) return [3, 4];
+    if (total === 8) return [4, 4];
+    if (total === 9) return [3, 3, 3];  // 3 groupes
+    if (total === 10) return [3, 3, 4]; // 3 groupes
 
     // Pour > 10 (ne devrait pas arriver mais au cas où)
     const groups = [];
     let remaining = total;
     while (remaining > 0) {
-        const groupSize = Math.min(5, remaining);
+        const groupSize = Math.min(4, remaining);
         groups.push(groupSize);
         remaining -= groupSize;
     }
@@ -291,15 +286,15 @@ function checkCountingAnswer(answer, btn) {
 // ============================================
 
 function startAdditionRound() {
-    const sticksContainer = document.getElementById('addition-sticks-container');
     const operationContainer = document.getElementById('addition-operation');
+    const sticksRow = document.getElementById('addition-sticks-row');
     const answersContainer = document.getElementById('addition-answers');
     const feedback = document.getElementById('addition-feedback');
     const instruction = document.getElementById('addition-instruction');
 
     // Vider les conteneurs
-    sticksContainer.innerHTML = '';
     operationContainer.innerHTML = '';
+    sticksRow.innerHTML = '';
     answersContainer.innerHTML = '';
     feedback.innerHTML = '';
     feedback.className = 'feedback';
@@ -319,69 +314,28 @@ function startAdditionRound() {
     gameState.additionColor2 = colors[1];
     gameState.additionStep = 1;
 
-    // Créer la structure visuelle : bâtonnets en bas, opération au-dessus
-    // Groupe 1
-    const group1Wrapper = document.createElement('div');
-    group1Wrapper.className = 'addition-group';
-    group1Wrapper.id = 'add-group1';
+    // LIGNE 1 : L'opération (style comme partie 3)
+    operationContainer.innerHTML = `
+        <span class="big-number total ${gameState.additionColor1}" id="add-num1">?</span>
+        <span class="op-symbol">+</span>
+        <span class="big-number total ${gameState.additionColor2}" id="add-num2">?</span>
+        <span class="op-symbol">=</span>
+        <div class="result-box" id="add-total">?</div>
+    `;
 
-    const sticks1Container = document.createElement('div');
-    sticks1Container.className = 'sticks-box';
-    createGroupedSticks(sticks1Container, num1, gameState.additionColor1);
+    // LIGNE 2 : Les bâtonnets dans leurs carrés
+    const sticks1Box = document.createElement('div');
+    sticks1Box.className = 'sticks-box-addition';
+    sticks1Box.id = 'sticks-group1';
+    createGroupedSticks(sticks1Box, num1, gameState.additionColor1);
 
-    const number1Box = document.createElement('div');
-    number1Box.className = 'number-box';
-    number1Box.id = 'add-num1';
-    number1Box.innerHTML = '<span class="result-box">?</span>';
+    const sticks2Box = document.createElement('div');
+    sticks2Box.className = 'sticks-box-addition';
+    sticks2Box.id = 'sticks-group2';
+    createGroupedSticks(sticks2Box, num2, gameState.additionColor2, num1);
 
-    group1Wrapper.appendChild(number1Box);
-    group1Wrapper.appendChild(sticks1Container);
-
-    // Opérateur +
-    const plusOperator = document.createElement('div');
-    plusOperator.className = 'op-symbol-vertical';
-    plusOperator.textContent = '+';
-
-    // Groupe 2
-    const group2Wrapper = document.createElement('div');
-    group2Wrapper.className = 'addition-group';
-    group2Wrapper.id = 'add-group2';
-
-    const sticks2Container = document.createElement('div');
-    sticks2Container.className = 'sticks-box';
-    createGroupedSticks(sticks2Container, num2, gameState.additionColor2, num1);
-
-    const number2Box = document.createElement('div');
-    number2Box.className = 'number-box';
-    number2Box.id = 'add-num2';
-    number2Box.innerHTML = '<span class="result-box">?</span>';
-
-    group2Wrapper.appendChild(number2Box);
-    group2Wrapper.appendChild(sticks2Container);
-
-    // Opérateur =
-    const equalsOperator = document.createElement('div');
-    equalsOperator.className = 'op-symbol-vertical';
-    equalsOperator.textContent = '=';
-
-    // Résultat
-    const resultWrapper = document.createElement('div');
-    resultWrapper.className = 'addition-group result-group';
-    resultWrapper.id = 'add-result';
-
-    const resultBox = document.createElement('div');
-    resultBox.className = 'number-box';
-    resultBox.id = 'add-total';
-    resultBox.innerHTML = '<span class="result-box result-final">?</span>';
-
-    resultWrapper.appendChild(resultBox);
-
-    // Assembler
-    sticksContainer.appendChild(group1Wrapper);
-    sticksContainer.appendChild(plusOperator);
-    sticksContainer.appendChild(group2Wrapper);
-    sticksContainer.appendChild(equalsOperator);
-    sticksContainer.appendChild(resultWrapper);
+    sticksRow.appendChild(sticks1Box);
+    sticksRow.appendChild(sticks2Box);
 
     // Instruction et première question
     instruction.innerHTML = `Compte les bâtonnets <span class="big-number ${gameState.additionColor1}">?</span>`;
@@ -456,10 +410,8 @@ function checkAdditionStep(answer, btn, step) {
 
         if (step === 1) {
             // Révéler le premier nombre
-            const num1Box = document.querySelector('#add-num1 .result-box');
+            const num1Box = document.getElementById('add-num1');
             num1Box.textContent = answer;
-            num1Box.classList.add(gameState.additionColor1);
-            num1Box.style.borderStyle = 'solid';
 
             feedback.textContent = getSuccessMessage();
             feedback.className = 'feedback success';
@@ -471,10 +423,8 @@ function checkAdditionStep(answer, btn, step) {
 
         } else if (step === 2) {
             // Révéler le deuxième nombre
-            const num2Box = document.querySelector('#add-num2 .result-box');
+            const num2Box = document.getElementById('add-num2');
             num2Box.textContent = answer;
-            num2Box.classList.add(gameState.additionColor2);
-            num2Box.style.borderStyle = 'solid';
 
             feedback.textContent = getSuccessMessage();
             feedback.className = 'feedback success';
@@ -486,7 +436,7 @@ function checkAdditionStep(answer, btn, step) {
 
         } else if (step === 3) {
             // Révéler le résultat final
-            const totalBox = document.querySelector('#add-total .result-box');
+            const totalBox = document.getElementById('add-total');
             totalBox.textContent = answer;
             totalBox.style.borderStyle = 'solid';
             totalBox.style.background = '#58D68D';
@@ -527,6 +477,7 @@ function checkAdditionStep(answer, btn, step) {
 
 function startSubtractionRound() {
     const container = document.getElementById('subtraction-sticks');
+    const operationContainer = document.getElementById('subtraction-operation');
     const answersContainer = document.getElementById('subtraction-answers');
     const feedback = document.getElementById('subtraction-feedback');
     const instruction = document.getElementById('subtraction-instruction');
@@ -548,6 +499,16 @@ function startSubtractionRound() {
     // Choisir une couleur
     const color = STICK_COLORS[Math.floor(Math.random() * STICK_COLORS.length)];
     gameState.subtractionColor = color;
+
+    // Préparer l'opération (invisible au début pour réserver l'espace)
+    operationContainer.innerHTML = `
+        <span class="big-number total ${color}">${total}</span>
+        <span class="op-symbol minus"></span>
+        <span class="big-number removed-num">${toRemove}</span>
+        <span class="op-symbol">=</span>
+        <div class="result-box">?</div>
+    `;
+    operationContainer.classList.remove('visible');
 
     // Instruction initiale - inviter l'enfant à placer ses bâtonnets
     instruction.innerHTML = `Place <span class="big-number ${color}">${total}</span> bâtonnets devant toi !`;
@@ -587,16 +548,9 @@ function startSubtractionRound() {
                 sticks[idx].classList.add('removed');
             });
 
-            // Afficher l'opération de manière ludique
-            instruction.innerHTML = `
-                <div class="operation-display">
-                    <span class="big-number total ${color}">${total}</span>
-                    <span class="op-symbol minus"></span>
-                    <span class="big-number removed-num">${toRemove}</span>
-                    <span class="op-symbol">=</span>
-                    <div class="result-box">?</div>
-                </div>
-            `;
+            // Rendre l'opération visible
+            operationContainer.classList.add('visible');
+            instruction.innerHTML = `Combien en reste-t-il ?`;
 
             // Créer les boutons de réponse
             const answers = generateAnswerChoices(remaining, 1, 10);
