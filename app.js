@@ -357,7 +357,7 @@ function startSubtractionRound() {
     const color = STICK_COLORS[Math.floor(Math.random() * STICK_COLORS.length)];
 
     // Instruction initiale - inviter l'enfant à placer ses bâtonnets
-    instruction.innerHTML = `Place <strong>${total}</strong> bâtonnets devant toi !`;
+    instruction.innerHTML = `Place <span class="big-number">${total}</span> bâtonnets devant toi !`;
 
     // Créer tous les bâtonnets
     const sticks = [];
@@ -369,12 +369,12 @@ function startSubtractionRound() {
         sticks.push(stick);
     }
 
-    // Délai pour que l'enfant place ses bâtonnets (2 sec par bâton)
-    const countingDelay = total * 2000;
+    // Délai pour que l'enfant place ses bâtonnets (3 sec par bâton)
+    const countingDelay = total * 3000;
 
     // Après le délai, annoncer la soustraction
     setTimeout(() => {
-        instruction.innerHTML = `<strong>${toRemove}</strong> s'en ${toRemove > 1 ? 'vont' : 'va'}... Décale-les ! 👋`;
+        instruction.innerHTML = `<span class="big-number">${toRemove}</span> s'en ${toRemove > 1 ? 'vont' : 'va'}... Décale-les ! 👋`;
 
         // Sélectionner aléatoirement les bâtonnets à enlever
         const toRemoveIndexes = [];
@@ -394,14 +394,23 @@ function startSubtractionRound() {
             }, i * 600); // 600ms entre chaque bâtonnet (plus lent)
         });
 
-        // Après l'animation, griser les bâtonnets (ils restent visibles)
+        // Après l'animation, griser les bâtonnets (ils restent décalés)
         setTimeout(() => {
             toRemoveIndexes.forEach(idx => {
-                sticks[idx].classList.remove('leaving');
+                // Ajouter 'removed' SANS enlever 'leaving' pour garder la position
                 sticks[idx].classList.add('removed');
             });
 
-            instruction.innerHTML = `Combien de bâtonnets <strong>en couleur</strong> ?`;
+            // Afficher l'opération de manière ludique
+            instruction.innerHTML = `
+                <div class="operation-display">
+                    <span class="big-number total">${total}</span>
+                    <span class="op-symbol">−</span>
+                    <span class="big-number removed-num">${toRemove}</span>
+                    <span class="op-symbol">=</span>
+                    <span class="big-number result">?</span>
+                </div>
+            `;
 
             // Créer les boutons de réponse
             const answers = generateAnswerChoices(remaining, 1, 10);
@@ -414,7 +423,7 @@ function startSubtractionRound() {
             });
         }, toRemove * 600 + 1200); // Délai total ajusté
 
-    }, countingDelay); // 2 secondes par bâton pour que l'enfant place les siens
+    }, countingDelay); // 3 secondes par bâton pour que l'enfant place les siens
 }
 
 function checkSubtractionAnswer(answer, btn) {

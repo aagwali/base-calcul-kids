@@ -221,12 +221,88 @@ body {
     }
 }
 
-/* Bâtonnet grisé (enlevé mais visible) */
+/* Bâtonnet grisé (enlevé mais visible, reste décalé) */
 .stick.removed {
     background: linear-gradient(180deg, #ccc 0%, #999 100%) !important;
     opacity: 0.4;
     transform: translateY(-30px);
     box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    animation: none; /* Stopper l'animation pour figer la position */
+}
+
+/* Affichage ludique de l'opération de soustraction */
+.operation-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 15px;
+    background: linear-gradient(135deg, #fff9e6 0%, #fff 100%);
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.big-number {
+    font-size: 3rem;
+    font-weight: bold;
+    min-width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    animation: popIn 0.4s ease;
+}
+
+.big-number.total {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.big-number.removed-num {
+    background: linear-gradient(135deg, #FF6B6B 0%, #ee5a5a 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+}
+
+.big-number.result {
+    background: linear-gradient(135deg, #58D68D 0%, #48b577 100%);
+    color: white;
+    font-size: 3.5rem;
+    box-shadow: 0 4px 15px rgba(88, 214, 141, 0.4);
+    animation: pulse 1s ease infinite;
+}
+
+.op-symbol {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Style pour les gros chiffres dans les instructions */
+.instruction .big-number {
+    display: inline-flex;
+    font-size: 2rem;
+    min-width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #FF6B6B 0%, #ee5a5a 100%);
+    color: white;
+    border-radius: 10px;
+    vertical-align: middle;
+    margin: 0 5px;
 }
 
 /* Conteneur des opérations (addition) */
