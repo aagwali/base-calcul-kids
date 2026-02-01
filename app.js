@@ -352,6 +352,8 @@ function startSubtractionRound() {
     const toRemove = Math.floor(Math.random() * (total - 1)) + 1; // 1 à (total-1)
     const remaining = total - toRemove;
     gameState.currentAnswer = remaining;
+    gameState.subtractionTotal = total;
+    gameState.subtractionToRemove = toRemove;
 
     // Choisir une couleur
     const color = STICK_COLORS[Math.floor(Math.random() * STICK_COLORS.length)];
@@ -401,14 +403,14 @@ function startSubtractionRound() {
                 sticks[idx].classList.add('removed');
             });
 
-            // Afficher l'opération de manière ludique
+            // Afficher l'opération de manière ludique (même style que l'addition)
             instruction.innerHTML = `
                 <div class="operation-display">
                     <span class="big-number total ${color}">${total}</span>
                     <span class="op-symbol minus"></span>
                     <span class="big-number removed-num">${toRemove}</span>
                     <span class="op-symbol">=</span>
-                    <span class="big-number result">?</span>
+                    <div class="result-box">?</div>
                 </div>
             `;
 
@@ -428,7 +430,9 @@ function startSubtractionRound() {
 
 function checkSubtractionAnswer(answer, btn) {
     const feedback = document.getElementById('subtraction-feedback');
+    const instruction = document.getElementById('subtraction-instruction');
     const allButtons = document.querySelectorAll('#subtraction-answers .answer-btn');
+    const resultBox = document.querySelector('#subtraction-screen .result-box');
 
     if (answer === gameState.currentAnswer) {
         // Bonne réponse
@@ -439,16 +443,26 @@ function checkSubtractionAnswer(answer, btn) {
         gameState.scores.subtraction++;
         updateScore('subtraction');
 
+        // Mettre à jour la result-box avec la bonne réponse
+        if (resultBox) {
+            resultBox.textContent = answer;
+            resultBox.style.borderStyle = 'solid';
+            resultBox.style.background = '#58D68D';
+            resultBox.style.color = 'white';
+        }
+
         allButtons.forEach(b => b.disabled = true);
 
         gameState.roundsPlayed++;
+
+        // Attendre 4 secondes pour que l'enfant voie l'opération complète
         setTimeout(() => {
             if (gameState.roundsPlayed >= 5) {
                 showCelebration();
             } else {
                 startSubtractionRound();
             }
-        }, 1500);
+        }, 4000);
     } else {
         // Mauvaise réponse
         btn.classList.add('wrong');
